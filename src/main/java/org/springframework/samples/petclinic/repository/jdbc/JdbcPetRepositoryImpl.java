@@ -15,6 +15,10 @@
  */
 package org.springframework.samples.petclinic.repository.jdbc;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +36,8 @@ import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.Specialty;
+import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.Visit;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
 import org.springframework.samples.petclinic.repository.PetRepository;
@@ -128,6 +134,20 @@ public class JdbcPetRepositoryImpl implements PetRepository {
             .addValue("birth_date", pet.getBirthDate().toDate())
             .addValue("type_id", pet.getType().getId())
             .addValue("owner_id", pet.getOwner().getId());
+    }
+    
+    /**
+     * Refresh the cache of Pets that the ClinicService is holding.
+     */
+    @Override
+    public Collection<Pet> findAll() throws DataAccessException {
+        List<Pet> pets = new ArrayList<>();
+        // Retrieve the list of all pets.
+        pets.addAll(this.namedParameterJdbcTemplate.query(
+            "SELECT id, name, birth_date, type_id, owner_id FROM pets",
+            BeanPropertyRowMapper.newInstance(Pet.class)));
+        
+        return pets;
     }
 
 }

@@ -15,13 +15,17 @@
  */
 package org.springframework.samples.petclinic.web;
 
+import java.text.DateFormat;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.model.Pets;
 import org.springframework.samples.petclinic.model.Visit;
+import org.springframework.samples.petclinic.model.Visits;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -31,6 +35,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Juergen Hoeller
@@ -94,5 +101,29 @@ public class VisitController {
         model.put("visits", this.clinicService.findPetById(petId).getVisits());
         return "visitList";
     }
+    
+    //TODO: objectmapper does not seem to have an effect, need to simplify json output of date
+    @Bean
+    public ObjectMapper jsonMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        //Fully qualified path shows I am using latest enum
+        //objectMapper.setDateFormat(new DateFormat().);
+        objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+            WRITE_DATES_AS_TIMESTAMPS , false);
+
+        return objectMapper;
+    }
+
+    @RequestMapping(value = "/owners/{ownerId}/pets/{petId}/visits.json", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Visits showVisits(@PathVariable int ownerId, @PathVariable int petId) {
+    	
+    	String petName = this.clinicService.findPetById(petId).getName();
+    	Pet pet = this.clinicService.findOwnerById(ownerId).getPet(petName);
+        Visits visits = new Visits();
+        visits.getVisitList().addAll(pet.getVisits());
+    	return visits;
+    }
 }

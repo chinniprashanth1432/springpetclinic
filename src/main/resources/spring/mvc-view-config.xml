@@ -29,12 +29,22 @@
 
     <!-- Renders an XML view. Used by the BeanNameViewResolver  -->
     <bean id="vets/vetList.xml" class="org.springframework.web.servlet.view.xml.MarshallingView">
-        <property name="marshaller" ref="marshaller"/>
+        <property name="marshaller" ref="vetsMarshaller"/>
     </bean>
 
-    <oxm:jaxb2-marshaller id="marshaller">
+    <oxm:jaxb2-marshaller id="vetsMarshaller">
         <!-- Object-XML mapping declared using annotations inside 'Vets' -->
         <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Vets"/>
+    </oxm:jaxb2-marshaller>
+    
+    <!-- Renders an XML view. Used by the BeanNameViewResolver  -->
+    <bean id="pets/petList.xml" class="org.springframework.web.servlet.view.xml.MarshallingView">
+        <property name="marshaller" ref="petsMarshaller"/>
+    </bean>
+
+    <oxm:jaxb2-marshaller id="petsMarshaller">
+        <!-- Object-XML mapping declared using annotations inside 'Pets' -->
+        <oxm:class-to-be-bound name="org.springframework.samples.petclinic.model.Pets"/>
     </oxm:jaxb2-marshaller>
 
 </beans>

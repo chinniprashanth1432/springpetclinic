@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
@@ -32,6 +33,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.core.style.ToStringCreator;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Simple JavaBean domain object representing an owner.
@@ -46,18 +49,22 @@ import org.springframework.core.style.ToStringCreator;
 public class Owner extends Person {
     @Column(name = "address")
     @NotEmpty
+    @JsonIgnore
     private String address;
 
     @Column(name = "city")
     @NotEmpty
+    @JsonIgnore
     private String city;
 
     @Column(name = "telephone")
     @NotEmpty
     @Digits(fraction = 0, integer = 10)
+    @JsonIgnore
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @JsonIgnore
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "owner")
     private Set<Pet> pets;
 
 

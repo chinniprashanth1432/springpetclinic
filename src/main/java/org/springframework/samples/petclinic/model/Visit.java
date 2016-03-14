@@ -19,12 +19,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * Simple JavaBean domain object representing a visit.
@@ -40,7 +43,8 @@ public class Visit extends BaseEntity {
      */
     @Column(name = "visit_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    @DateTimeFormat(pattern = "yyyy/MM/dd")
+    //@DateTimeFormat(pattern = "yyyy/MM/dd")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate date;
 
     /**
@@ -56,6 +60,13 @@ public class Visit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
+    
+    /**
+     * Holds value of property vet.
+     */
+    @OneToOne
+    @JoinColumn(name = "vet_id")
+    private Vet vet;
 
 
     /**
@@ -118,6 +129,24 @@ public class Visit extends BaseEntity {
      */
     public void setPet(Pet pet) {
         this.pet = pet;
+    }
+    
+    /**
+     * Getter for property vet.
+     *
+     * @return Value of property vet.
+     */
+    public Vet getVet() {
+        return this.vet;
+    }
+
+    /**
+     * Setter for property vet.
+     *
+     * @param vet New value of property vet.
+     */
+    public void setVet(Vet vet) {
+        this.vet = vet;
     }
 
 }
